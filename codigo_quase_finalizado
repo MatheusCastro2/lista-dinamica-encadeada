@@ -1,0 +1,181 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+
+typedef struct no
+{
+    int valor;
+    struct no *proximo;
+    struct no *anterior;
+} No;
+
+// aqui vamos colocar elementos no inicio da lista
+
+void inserir_inicio(No **lista, int num)
+{
+    No *novo = malloc(sizeof(No));
+    if (novo)
+    {
+        novo->valor = num;
+        novo->proximo = *lista; // aqui o nosso NO vai apontar para o começo da nossa lista
+        novo ->anterior = NULL;
+        if(*lista)
+            (*lista)->anterior = novo;
+        *lista = novo;
+    }
+    else
+    {
+        printf("Erro ao alocar memoria!\n");
+    }
+}
+
+// aqui vamos colocar elementos no final da lista
+
+void inserir_fim(No **lista, int num)
+{
+    No *aux, *novo = malloc(sizeof(No));
+
+    if (novo)
+    {
+        novo->valor = num;
+        novo->proximo = NULL;
+
+        // é o primeiro?
+        if (*lista == NULL){
+            *lista = novo;
+            novo->anterior = NULL;
+        }
+        else
+        {
+            aux = *lista;
+            while (aux->proximo)
+                aux = aux->proximo;
+            aux->proximo = novo;
+            novo->anterior = aux;
+        }
+    }
+    else
+    {
+        printf("Erro ao alocar na memoria!\n");
+    }
+}
+
+No* remover(No ** lista, int num){
+
+    No *aux,*remover = NULL;
+
+    if(*lista){
+        if((*lista) ->valor == num){
+            remover = *lista;
+            *lista = remover -> proximo;
+            if(*lista)
+                (*lista)->anterior = NULL;
+        }
+        else{
+            aux = *lista;
+            while(aux->proximo && aux->proximo->valor != num)
+                aux = aux->proximo;
+            if(aux->proximo){
+                remover = aux->proximo;
+                aux->proximo = remover->proximo;
+                if(aux->proximo)
+                    aux->proximo->anterior = aux;
+                
+            }
+        }
+    }
+            return remover;
+}
+    
+No* buscar(No **lista, int num){
+
+    No *aux,*no = NULL;
+
+    aux = lista;
+    while(aux && aux->valor != num);
+        aux = aux->proximo;
+    if(aux)
+        no = aux;
+
+    return no;
+}
+
+
+void imprimir(No *no)
+{
+    printf("\n\tLista: ");
+    while (no)
+    {
+        printf("%d", no->valor);
+        no = no->proximo;
+    }
+    printf("\n\n");
+}
+
+int main(void)
+{
+    int opc,valor;
+    No *removido,*lista = NULL;
+
+
+    printf("|------------------------------------------------|\n");
+    printf("|---1-Inserir um elemento no inicio--------------|\n");
+    printf("|---2-Inserir um elemento no final da lista------|\n");
+    printf("|---3-Remover um elemento com valor especifico---|\n");
+    printf("|---4-Buscar elemento----------------------------|\n");
+    printf("|---5-Exibir todos os elementos da lista---------|\n");
+    printf("|------------------------------------------------|");
+    scanf("%d", &opc);
+    do
+    {
+        switch (opc)
+        {
+        case 1:
+            printf("Digite um valor: ");
+            scanf("%d" , &valor);
+            inserir_inicio(&lista, valor);
+            break;
+
+        case 2:
+            printf("Digite um valor:  ");
+            scanf("%d", &valor);
+            inserir_fim(&lista, valor);
+            break;
+
+        case 3:
+            printf("Digite o valor para ser removido:  ");
+            scanf("%d", &valor);
+            removido = remover(&lista, valor);
+            if(removido){
+                printf("elemento a ser removido: %d\n", removido->valor);
+                free(remover);
+            }
+            else{
+                printf("elemento nao encontrado!\n");
+            }
+            break;
+
+        case 4:
+            printf("Digite o valor para ser buscado:  ");
+            scanf("%d", &valor);
+            removido = buscar(&lista, valor);
+            if(removido){
+                printf("elemento a ser buscado: %d\n", removido->valor);
+            }
+            else{
+                printf("elemento nao encontrado!\n");
+            }
+
+            break;
+
+        case 5:
+            imprimir(lista);
+            break;
+
+        default:
+            if (opc != 0)
+                printf("opcao invalida!\n");
+            break;
+        }
+    } while (opc != 0);
+}
